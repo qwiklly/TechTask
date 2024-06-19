@@ -8,9 +8,14 @@ using System.Threading.Tasks;
 
 namespace TechTask.Pages
 {
-    public class OrdersModel(IOperations operations) : PageModel
+    public class OrdersModel : PageModel
     {
-        private readonly IOperations _operations = operations;
+        private readonly IOperations _operations;
+
+        public OrdersModel(IOperations operations)
+        {
+            _operations = operations;
+        }
 
         public List<GetOrdersDTO> Orders { get; set; }
         public List<GetProductsDTO> Products { get; set; }
@@ -41,7 +46,6 @@ namespace TechTask.Pages
         public async Task<IActionResult> OnPostDeleteOrderAsync(int id)
         {
             await _operations.DeleteOrderAsync(id);
-
             return RedirectToPage();
         }
     }

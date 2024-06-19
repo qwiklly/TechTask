@@ -29,15 +29,15 @@ namespace TechTask.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("DeleteProduct/{id}")]
+        [HttpDelete("DeleteProduct")]
         [SwaggerOperation(Summary = "Удалить новый продукт", Description = "Метод необходим для удаления нового продукта.")]
-        public async Task<ActionResult<DeleteProductResponse>> DeleteProductAsync(int id)
+        public async Task<ActionResult<DeleteProductResponse>> DeleteProductAsync(DeleteProductDTO model)
         {
-            var result = await accountrepo.DeleteProductAsync(id);
+            var result = await accountrepo.DeleteProductAsync(model);
             return Ok(result);
         }
 
-        [HttpDelete("DeleteOrder/{id}")]
+        [HttpDelete("DeleteOrder")]
         [SwaggerOperation(Summary = "Отменить заказ", Description = "Метод необходим отмены заказа.")]
         public async Task<ActionResult<DeleteOrderResponse>> DeleteOrderAsync(int id)
         {

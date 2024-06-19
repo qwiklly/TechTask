@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TechTask.Data;
-using TechTask.DTOs;
+﻿using TechTask.DTOs;
 using TechTask.Models;
+using TechTask.Data;
+using Microsoft.EntityFrameworkCore;
 using static TechTask.Responses.CustomResponses;
 
 namespace TechTask.Repositories
@@ -62,36 +62,39 @@ namespace TechTask.Repositories
         }
 
         // Метод для удаления товара
-        public async Task<DeleteProductResponse> DeleteProductAsync(int id)
+        public async Task<DeleteProductResponse> DeleteProductAsync(DeleteProductDTO model)
         {
-            var product = await _appDbContext.Product.FindAsync(id);
-            if (product == null)
+            var product = await GetProduct(model.Id);
+            if (product != null)
+            {
+                _appDbContext.Product.Remove(product);
+                await _appDbContext.SaveChangesAsync();
+                return new DeleteProductResponse(true, "Product deleted successfully");
+            }
+            else
+            {
                 return new DeleteProductResponse(false, "Product not found");
-
-            _appDbContext.Product.Remove(product);
-            await _appDbContext.SaveChangesAsync();
-
-            return new DeleteProductResponse(true, "Product deleted successfully");
+            }
         }
 
         // Метод для удаления заказа
         public async Task<DeleteOrderResponse> DeleteOrderAsync(int id)
         {
-            var order = await _appDbContext.Order.Include(o => o.Products)
-            .FirstOrDefaultAsync(o => o.Id == id);
+            var order = await GetOrder(id);
+            if (order != null)
+            {
+                // Разрываем связи с продуктами
+                order.Products.Clear();
 
-            if (order == null)
+                // Удаление заказа
+                _appDbContext.Order.Remove(order);
+                await _appDbContext.SaveChangesAsync();
+                return new DeleteOrderResponse(true, "Order deleted successfully");
+            }
+            else
+            {
                 return new DeleteOrderResponse(false, "Order not found");
-
-            // Удаление связанных продуктов
-            _appDbContext.Product.RemoveRange(order.Products);
-
-            // Удаление заказа
-            _appDbContext.Order.Remove(order);
-
-            await _appDbContext.SaveChangesAsync();
-
-            return new DeleteOrderResponse(true, "Order deleted successfully");
+            }
         }
 
         // Метод для получения товара
@@ -118,6 +121,17 @@ namespace TechTask.Repositories
                    OrderDate = u.OrderDate,
                })
                .ToListAsync();
+        }
+
+        private async Task<Order?> GetOrder(int id)
+        {
+            return await _appDbContext.Order.Include(o => o.Products)
+                                            .FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+        private async Task<Product?> GetProduct(int id)
+        {
+            return await _appDbContext.Product.FirstOrDefaultAsync(e => e.Id == id);
         }
     }
 }

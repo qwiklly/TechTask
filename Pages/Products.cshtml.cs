@@ -22,9 +22,9 @@ namespace TechTask.Pages
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostDeleteProductAsync(int id)
+        public async Task<IActionResult> OnPostDeleteProductAsync(DeleteProductDTO model)
         {
-            var response = await _operations.DeleteProductAsync(id);
+            var response = await _operations.DeleteProductAsync(model);
             return RedirectToPage();
         }
     }

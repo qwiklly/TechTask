@@ -8,7 +8,7 @@ namespace TechTask.Repositories
     {
         Task<AddProductResponse> AddProductAsync(AddProductDTO model);
         Task<AddOrderResponse> AddOrderAsync(AddOrderDTO model);
-        Task<DeleteProductResponse> DeleteProductAsync(int id);
+        Task<DeleteProductResponse> DeleteProductAsync(DeleteProductDTO model);
         Task<DeleteOrderResponse> DeleteOrderAsync(int id);
         Task<List<GetProductsDTO>> GetProductAsync();
         Task<List<Product>> GetProductsByIdsAsync(List<int> productIds);
